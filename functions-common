@@ -353,18 +353,26 @@ function err_if_not_set {
 }
 
 # Exit after outputting a message about the distribution not being supported.
-# exit_distro_not_supported [optional-string-telling-what-is-missing]
 function exit_distro_not_supported {
     if [[ -z "$DISTRO" ]]; then
         GetDistro
     fi
 
-    if [ $# -gt 0 ]; then
-        die $LINENO "Support for $DISTRO is incomplete: no support for $@"
-    else
-        die $LINENO "Support for $DISTRO is incomplete."
-    fi
+    case "$DISTRO" in
+        ubuntu | debian | kali)
+            if [ $# -gt 0 ]; then
+                die $LINENO "Support for $DISTRO is incomplete: no support for $@"
+            else
+                die $LINENO "Support for $DISTRO is incomplete."
+            fi
+            ;;  
+        *)
+            die $LINENO "Unsupported distribution '$DISTRO'"
+            ;;
+    esac
 }
+
+
 
 # Test if the named environment variable is set and not zero length
 # is_set env-var
